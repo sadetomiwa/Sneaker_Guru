@@ -1,9 +1,8 @@
-from app import app
+from app import app, db
 from flask import render_template, redirect, url_for, flash
 from app.forms import SignUpForm, LoginForm
-
-
 from flask_login import login_user, current_user, logout_user, login_required
+from app.models import User
 
 
 
@@ -26,12 +25,28 @@ def signup():
         email = form.email.data
         password = form.password.data
 
-        flash(f'Guru status achieved {username}!, dark')
+        check_user = User.query.filter_by(username=username ).first()
+        if check_user:
+            flash('Username already exists', 'danger')
+            return redirect(url_for('signup'))
+        else:
+            new_user = User(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
+            flash(f'Guru status achieved {new_user.username}!, dark')
+            db.session.add(new_user)
+            db.session.commit()
+       
+
+      
         return redirect(url_for('index'))
+    
+
 
         
     return render_template('signup.html', form = form)
     
+
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -42,10 +57,21 @@ def login():
         username = form.username.data
         password = form.password.data
         print(username, password)
+        user = User.query.filter_by(username=username).first()
+        if user is not None and user.check_password(password):
+            login_user(user)
+            flash('Logged in successfully.', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Username or Password is incorrect.', 'danger')
+            return redirect(url_for('login'))
+        
+    return render_template('index.html', form=form)
 
-        flash(f'Guru status achieved {username}!, dark')
-        return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+
+
+            
+
     
     
 
