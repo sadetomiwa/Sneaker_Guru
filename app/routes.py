@@ -10,9 +10,10 @@ from app.models import User
 
 
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html' ,loggedin=False)
+    return render_template('index.html' )
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -66,7 +67,7 @@ def login():
             flash('Username or Password is incorrect.', 'danger')
             return redirect(url_for('login'))
         
-    return render_template('index.html', form=form)
+    return render_template('login.html', form=form)
 
 
 
@@ -75,9 +76,15 @@ def login():
     
     
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout')
 def logout():
-    return render_template('logout.html')
+    logout_user()
+    flash('You have been logged out.', 'warning')
+    return redirect(url_for('index'))
+
+
+
+
 
 
 @app.route('/closet', methods=['GET', 'POST'])

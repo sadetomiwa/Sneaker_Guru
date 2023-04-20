@@ -1,11 +1,11 @@
-from app import db
+from app import db, login
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_login import UserMixin
+from flask_login import UserMixin
 
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
@@ -25,6 +25,13 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+@login.user_loader
+def get_user_id(user_id):
+    return User.query.get(user_id)
+
+
+    
 
 
 # class Closet(db.Model):

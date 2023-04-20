@@ -3,22 +3,28 @@
 {% block title %} Home {% endblock %}
 
 {% block header %}
-    <div class="text-center">
-        <h1>One stop shop for all things SNEAKERS</h1>
-        <p>Keep an inventory, Find sneaker exclusives, chat with others just like you</p>
-    </div>
-    <div class="col-12 col-lg-4 order-0 order-lg-1">
-        <div class="position-sticky top-0">
-            <div class="card mt-3">
-                <div class="card-header">Search</div>
-                <div class="card-body">
-                    <form action="" method="post">
-                        
+    {% if current_user.is_authenticated %}
+            <div class="text-center">
+                <h1>One stop shop for all things SNEAKERS</h1>
+                <p>Keep an inventory, Find sneaker exclusives, chat with others just like you</p>
+            </div>
+        <div class="col-12 col-lg-4 order-0 order-lg-1">
+            <div class="position-sticky top-0">
+                <div class="card mt-3">
+                    <div class="card-header">Search</div>
+                    <div class="card-body">
+                        <form action="" method="post">
+                            
+                    </div>
                 </div>
             </div>
         </div>
-
-    </div>
+    {% else %}
+        <div class="text-center">
+            <h1>Sign up to stay in the know</h1>
+            <p>Simplicity at tips of your hand</p>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
