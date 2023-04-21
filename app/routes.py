@@ -124,7 +124,7 @@ def get_news():
 def search_shoes():
     query = request.args.get('q', '')
     headers = {
-        'X-RapidAPI-Key': '210763df38msh07fbd1b41b83d8bp1e9624jsnf40268a5c904',
+        'X-RapidAPI-Key': app.config['RAPIDAPI_KEY'],
         'X-RapidAPI-Host': 'the-sneaker-database.p.rapidapi.com'
     }
     params = {
