@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% block title %}Search{% endblock %} {% block content
+%}
+<h1>Search Results</h1>
+{% if results %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for result in results %}
+  <div class="col">
+    <div class="card h-100">
+      <img
+        src="{{ result['image']['thumbnail'] }}"
+        class="card-img-top"
+        alt="{{ result['name'] }}"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ result['name'] }}</h5>
+        <p class="card-text">Brand: {{ result['brand'] }}</p>
+        <p class="card-text">Colorway: {{ result['colorway'] }}</p>
+        <p class="card-text">Release Year: {{ result['releaseYear'] }}</p>
+        <p class="card-text">Story: {{ result['story'] }}</p>
+        
+          <a href="{{ url_for('add_to_closet', sneaker_id=result['id']) }}" class="btn btn-danger">Add to Closet</a>>
+        
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No results found.</p>
+{% endif %} {% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {% block content %}
+<h1>My Closet</h1>
+{% if closet_items %}
+<ul>
+  {% for item in closet_items %}
+  <li>{{ item.sneaker_id }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Your closet is empty.</p>
+{% endif %} {% endblock %}

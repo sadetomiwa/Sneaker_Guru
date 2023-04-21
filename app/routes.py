@@ -1,19 +1,24 @@
-from app import app, db
-from flask import render_template, redirect, url_for, flash
+from app import app, db, newscatcherapi
+from flask import render_template, redirect, url_for, flash, jsonify, request
 from app.forms import SignUpForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from app.models import User
+from app.models import User, Closet
+import requests
+
+
+@app.route('/')
+def landing():
+    return render_template('landing.html')
 
 
 
 
-
-
-
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/home')
 def index():
-    return render_template('index.html' )
+    all_articles = newscatcherapi.get_search(q='Upcoming sneaker releases', lang='en', countries='US', page_size=10)
+    articles = all_articles['articles']
+    return render_template('home.html', articles=articles)
+
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -32,7 +37,7 @@ def signup():
             return redirect(url_for('signup'))
         else:
             new_user = User(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
-            flash(f'Guru status achieved {new_user.username}!, dark')
+            flash('Guru status achieved !', 'dark')
             db.session.add(new_user)
             db.session.commit()
        
@@ -87,18 +92,85 @@ def logout():
 
 
 
-@app.route('/closet', methods=['GET', 'POST'])
-def closet():
-    return render_template('closet.html')
-
 
 @app.route('/watchlist', methods=['GET', 'POST'])
 def watchlist():
     return render_template('watchlist.html')
 
 
+@app.route('/news')
+def get_news():
+    
+    articles = newscatcherapi.get_top_headlines(lang='en')
+
+    
+    results = []
+    for article in articles['articles']:
+        results.append({
+            'title': article['title'],
+            'description': article['description'],
+            'url': article['url'],
+            'image': article['image'] if 'image' in article else None,
+            'source': article['source']['name']
+        })
+
+   
+    return jsonify(results)
 
 
 
+
+@app.route('/search')
+def search_shoes():
+    query = request.args.get('q', '')
+    headers = {
+        'X-RapidAPI-Key': '210763df38msh07fbd1b41b83d8bp1e9624jsnf40268a5c904',
+        'X-RapidAPI-Host': 'the-sneaker-database.p.rapidapi.com'
+    }
+    params = {
+        'limit': 10,
+        'name': query
+    }
+    url = "https://the-sneaker-database.p.rapidapi.com/sneakers"
+    response = requests.get(url, headers=headers, params=params)
+    data = response.json()
+    results = data['results']
+    return render_template('search.html', results=results)
+
+
+
+
+
+@app.route('/add_to_closet/<sneaker_id>')
+@login_required
+def add_to_closet(sneaker_id):
+    # sneaker_id = request.form.get('sneaker_id')
+    if not sneaker_id:
+        flash('Error: Sneaker ID not found in request.', 'error')
+        return redirect(request.referrer)
+    
+
+    
+   
+    new_closet_item = Closet(user_id=current_user.id, sneaker_id=sneaker_id)
+    db.session.add(new_closet_item)
+    db.session.commit()
+
+
+
+    
+    flash('Sneaker added to closet successfully!', 'success')
+    return redirect(request.referrer)
+
+
+
+@app.route('/closet')
+@login_required
+def closet():
+
+    closet_items = Closet.query.filter_by(user_id=current_user.id).all()
+    
+
+    return render_template('closet.html', closet_items=closet_items)
 
 
