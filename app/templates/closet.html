@@ -1,11 +1,30 @@
-{% extends 'base.html' %} {% block content %}
-<h1>My Closet</h1>
-{% if closet_items %}
-<ul>
-  {% for item in closet_items %}
-  <li>{{ item.sneaker_id }}</li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>Your closet is empty.</p>
-{% endif %} {% endblock %}
+{% extends 'base.html' %}
+{% block content %}
+  <h1>My Closet</h1>
+  {% if closet_items %}
+    <ul>
+      {% for item in closet_items %}
+        <li>
+          <div class="card mb-3">
+            <div class="row no-gutters">
+              <div class="col-md-4">
+                <img src="{{ item.sneaker.image }}" class="card-img" alt="{{ item.sneaker.name }}">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ item.sneaker.name }}</h5>
+                  <p class="card-text">{{ item.sneaker.brand }}</p>
+                  <p class="card-text">{{ item.sneaker.colorway }}</p>
+                  <p class="card-text">{{ item.sneaker.release_date }}</p>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Your closet is empty.</p>
+  {% endif %}
+{% endblock %}

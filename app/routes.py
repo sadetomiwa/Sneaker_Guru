@@ -168,6 +168,8 @@ def add_to_closet(sneaker_id):
 @login_required
 def closet():
 
+    
+
     closet_items = Closet.query.filter_by(user_id=current_user.id).all()
     
 
